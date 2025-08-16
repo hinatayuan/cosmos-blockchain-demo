@@ -45,7 +45,14 @@ cd cosmos-blockchain-demo
 npm install
 ```
 
-3. **启动开发环境**：
+3. **清理旧文件（重要！）**：
+由于项目结构调整，需要删除 src 目录中的旧后端文件：
+```bash
+# 删除旧的后端文件
+rm src/blockchain.js src/explorer.js src/test.js
+```
+
+4. **启动开发环境**：
 ```bash
 # 同时启动后端API服务器和前端开发服务器
 npm run start:full
@@ -55,15 +62,15 @@ npm run server    # 启动后端 API (端口 3000)
 npm run dev       # 启动前端开发服务器 (端口 5173)
 ```
 
-4. **访问应用**：
+5. **访问应用**：
 - 前端界面: http://localhost:5173
 - 后端API: http://localhost:3000
 
 ### 生产构建
 
 ```bash
-npm run build    # 构建前端
-npm run preview  # 预览构建结果
+npm run build      # 构建前端
+npm run start:prod # 构建并启动生产服务器
 ```
 
 ## 🎮 使用方法
@@ -103,27 +110,28 @@ npm run start:full
 
 ```
 cosmos-blockchain-demo/
-├── src/
-│   ├── components/           # React 组件
-│   │   ├── tabs/            # 标签页组件
-│   │   ├── StatusCard.tsx   # 状态卡片
-│   │   ├── TabButton.tsx    # 标签按钮
-│   │   ├── Alert.tsx        # 提示组件
+├── src/                     # 前端源代码 (React + TypeScript)
+│   ├── components/          # React 组件
+│   │   ├── tabs/           # 标签页组件
+│   │   ├── StatusCard.tsx  # 状态卡片
+│   │   ├── TabButton.tsx   # 标签按钮
+│   │   ├── Alert.tsx       # 提示组件
 │   │   └── ...
-│   ├── types/               # TypeScript 类型定义
-│   ├── utils/               # 工具函数和 API
-│   ├── App.tsx              # 主应用组件
-│   ├── main.tsx             # React 入口
-│   └── index.css            # 样式文件
-├── server/
-│   ├── blockchain.js        # 区块链核心逻辑
-│   ├── explorer.js          # API 服务器
-│   └── test.js              # 测试脚本
-├── package.json             # 项目配置
-├── vite.config.ts           # Vite 配置
-├── tsconfig.json            # TypeScript 配置
-├── tailwind.config.js       # Tailwind CSS 配置
-└── README.md                # 项目文档
+│   ├── types/              # TypeScript 类型定义
+│   ├── utils/              # 工具函数和 API
+│   ├── App.tsx             # 主应用组件
+│   ├── main.tsx            # React 入口
+│   └── index.css           # 样式文件
+├── server/                  # 后端源代码 (Node.js)
+│   ├── blockchain.js       # 区块链核心逻辑
+│   ├── explorer.js         # API 服务器
+│   └── test.js             # 测试脚本
+├── dist/                   # 构建输出目录
+├── package.json            # 项目配置
+├── vite.config.ts          # Vite 配置
+├── tsconfig.json           # TypeScript 配置
+├── tailwind.config.js      # Tailwind CSS 配置
+└── README.md               # 项目文档
 ```
 
 ## 🔧 开发指南
@@ -144,7 +152,7 @@ cosmos-blockchain-demo/
 
 ### API 扩展
 
-在 `src/explorer.js` 中添加新的 API 端点：
+在 `server/explorer.js` 中添加新的 API 端点：
 ```javascript
 app.get('/api/new-endpoint', (req, res) => {
   // 实现新功能
@@ -191,6 +199,22 @@ app.get('/api/new-endpoint', (req, res) => {
 - 转账功能测试
 - 验证者管理测试
 - 挖矿功能测试
+
+## 🛠️ 故障排除
+
+### 常见问题
+
+1. **导入错误**: 如果遇到文件导入错误，请确保删除了 `src` 目录中的旧后端文件
+2. **端口冲突**: 确保端口 3000 和 5173 没有被其他程序占用
+3. **依赖问题**: 运行 `npm install` 重新安装依赖
+
+### 重置项目
+
+如果遇到问题，可以重置项目：
+```bash
+rm -rf node_modules package-lock.json
+npm install
+```
 
 ## 📈 扩展功能
 
