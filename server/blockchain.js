@@ -1,9 +1,29 @@
 // server/blockchain.js - 区块链核心实现
-const { DirectSecp256k1HdWallet, makeCosmoshubPath } = require('@cosmjs/proto-signing');
-const { SigningStargateClient, GasPrice } = require('@cosmjs/stargate');
-const { Tendermint34Client } = require('@cosmjs/tendermint-rpc');
-const { Bech32Address } = require('@cosmjs/encoding');
+const { DirectSecp256k1HdWallet } = require('@cosmjs/proto-signing');
+const { stringToPath } = require('@cosmjs/crypto');
 const crypto = require('crypto');
+
+// 简单的助记词生成函数（用于演示）
+function generateMnemonic() {
+  const words = [
+    'abandon', 'ability', 'able', 'about', 'above', 'absent', 'absorb', 'abstract',
+    'absurd', 'abuse', 'access', 'accident', 'account', 'accuse', 'achieve', 'acid',
+    'acoustic', 'acquire', 'across', 'act', 'action', 'actor', 'actress', 'actual',
+    'adapt', 'add', 'addict', 'address', 'adjust', 'admit', 'adult', 'advance',
+    'advice', 'aerobic', 'affair', 'afford', 'afraid', 'again', 'age', 'agent',
+    'agree', 'ahead', 'aim', 'air', 'airport', 'aisle', 'alarm', 'album',
+    'alcohol', 'alert', 'alien', 'all', 'alley', 'allow', 'almost', 'alone',
+    'alpha', 'already', 'also', 'alter', 'always', 'amateur', 'amazing', 'among'
+  ];
+  
+  // 生成12个随机单词
+  const mnemonic = [];
+  for (let i = 0; i < 12; i++) {
+    mnemonic.push(words[Math.floor(Math.random() * words.length)]);
+  }
+  
+  return mnemonic.join(' ');
+}
 
 class CosmosBlockchain {
   constructor() {
@@ -22,7 +42,7 @@ class CosmosBlockchain {
   async createUser(username) {
     try {
       // 生成助记词
-      const mnemonic = DirectSecp256k1HdWallet.generateMnemonic();
+      const mnemonic = generateMnemonic();
       
       // 创建钱包
       const wallet = await DirectSecp256k1HdWallet.fromMnemonic(
