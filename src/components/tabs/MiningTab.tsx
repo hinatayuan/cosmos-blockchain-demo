@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { blockchainApi, handleApiError, getSuccessMessage } from '../../utils/api';
-import { Pickaxe, Play, Square, Zap } from 'lucide-react';
+import { Hammer, Play, Square, Zap } from 'lucide-react';
 
 interface MiningTabProps {
   onRefreshStatus: () => void;
@@ -101,7 +101,7 @@ const MiningTab: React.FC<MiningTabProps> = ({ onRefreshStatus, showAlert }) => 
         {/* 手动挖矿 */}
         <div className="glass-card p-6">
           <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-            <Pickaxe className="w-5 h-5" />
+            <Hammer className="w-5 h-5" />
             手动挖矿
           </h3>
           
