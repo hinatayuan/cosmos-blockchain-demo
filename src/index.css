@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  
+  body {
+    @apply bg-gradient-to-br from-cosmos-600 via-purple-600 to-cosmos-800;
+    min-height: 100vh;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl shadow-xl;
+  }
+  
+  .btn-primary {
+    @apply bg-cosmos-600 hover:bg-cosmos-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-cosmos-500 focus:ring-offset-2 focus:ring-offset-transparent;
+  }
+  
+  .btn-secondary {
+    @apply bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-transparent;
+  }
+  
+  .btn-danger {
+    @apply bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-transparent;
+  }
+  
+  .input-field {
+    @apply w-full px-3 py-2 border border-white/30 rounded-lg bg-white/10 backdrop-blur-sm text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-cosmos-500 focus:border-transparent transition-all duration-200;
+  }
+  
+  .tab-button {
+    @apply flex-1 py-3 px-4 text-center font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-cosmos-500 focus:ring-inset;
+  }
+  
+  .tab-button-active {
+    @apply bg-cosmos-600 text-white;
+  }
+  
+  .tab-button-inactive {
+    @apply text-white/70 hover:text-white hover:bg-white/10;
+  }
+}
