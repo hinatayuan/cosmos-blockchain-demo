@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmos 区块链浏览器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            color: #4a5568;
+            margin-bottom: 10px;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .status-card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .status-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .status-card .value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+
+        .tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .tab:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .tab.active:hover {
+            background: #667eea;
+        }
+
+        .tab-content {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            min-height: 400px;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        .blocks-list {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .block-item {
+            background: linear-gradient(135deg, #f7fafc, #edf2f7);
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .block-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .block-height {
+            font-size: 18px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .block-time {
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .block-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #4a5568;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+
+        .btn.secondary {
+            background: #48bb78;
+        }
+
+        .btn.secondary:hover {
+            background: #38a169;
+        }
+
+        .btn.danger {
+            background: #f56565;
+        }
+
+        .btn.danger:hover {
+            background: #e53e3e;
+        }
+
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .result.success {
+            background: #f0fff4;
+            border: 1px solid #9ae6b4;
+            color: #276749;
+        }
+
+        .result.error {
+            background: #fed7d7;
+            border: 1px solid #feb2b2;
+            color: #c53030;
+        }
+
+        .validators-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+
+        .validator-card {
+            background: linear-gradient(135deg, #f7fafc, #edf2f7);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #48bb78;
+        }
+
+        .validator-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .validator-status {
+            background: #48bb78;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .hash {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #666;
+            word-break: break-all;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #718096;
+        }
+
+        .auto-mine-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #f56565;
+        }
+
+        .status-indicator.active {
+            background: #48bb78;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部状态 -->
+        <div class="header">
+            <h1>🌟 Cosmos 区块链浏览器</h1>
+            <p>基于 Cosmos JS SDK 的区块链演示系统</p>
+            
+            <div class="status-grid" id="statusGrid">
+                <div class="status-card">
+                    <h3>当前高度</h3>
+                    <div class="value" id="currentHeight">-</div>
+                </div>
+                <div class="status-card">
+                    <h3>总区块数</h3>
+                    <div class="value" id="totalBlocks">-</div>
+                </div>
+                <div class="status-card">
+                    <h3>代币总供应量</h3>
+                    <div class="value" id="totalSupply">-</div>
+                </div>
+                <div class="status-card">
+                    <h3>活跃验证者</h3>
+                    <div class="value" id="activeValidators">-</div>
+                </div>
+                <div class="status-card">
+                    <h3>总用户数</h3>
+                    <div class="value" id="totalUsers">-</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 标签页 -->
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('blocks')">📦 区块浏览</button>
+            <button class="tab" onclick="showTab('users')">👥 用户管理</button>
+            <button class="tab" onclick="showTab('transfer')">💸 代币转账</button>
+            <button class="tab" onclick="showTab('mining')">⛏️ 挖矿管理</button>
+            <button class="tab" onclick="showTab('validators')">🛡️ 验证者</button>
+        </div>
+
+        <div class="tab-content">
+            <!-- 区块浏览 -->
+            <div class="tab-panel active" id="blocks">
+                <h2>最新区块</h2>
+                <div id="blocksList" class="blocks-list">
+                    <div class="loading">加载中...</div>
+                </div>
+            </div>
+
+            <!-- 用户管理 -->
+            <div class="tab-panel" id="users">
+                <h2>用户管理</h2>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <h3>创建新用户</h3>
+                        <div class="form-group">
+                            <label for="newUsername">用户名</label>
+                            <input type="text" id="newUsername" placeholder="输入用户名">
+                        </div>
+                        <button class="btn" onclick="createUser()">创建用户</button>
+                    </div>
+
+                    <div>
+                        <h3>查询用户</h3>
+                        <div class="form-group">
+                            <label for="queryUsername">用户名</label>
+                            <input type="text" id="queryUsername" placeholder="输入要查询的用户名">
+                        </div>
+                        <button class="btn secondary" onclick="queryUser()">查询用户</button>
+                    </div>
+                </div>
+
+                <div id="userResult" class="result" style="display: none;"></div>
+            </div>
+
+            <!-- 代币转账 -->
+            <div class="tab-panel" id="transfer">
+                <h2>代币转账</h2>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div>
+                        <h3>转账</h3>
+                        <div class="form-group">
+                            <label for="fromUser">发送者用户名</label>
+                            <input type="text" id="fromUser" placeholder="发送者用户名">
+                        </div>
+                        <div class="form-group">
+                            <label for="toAddress">接收者地址</label>
+                            <input type="text" id="toAddress" placeholder="接收者地址">
+                        </div>
+                        <div class="form-group">
+                            <label for="transferAmount">转账数量</label>
+                            <input type="number" id="transferAmount" placeholder="转账数量">
+                        </div>
+                        <button class="btn" onclick="transferTokens()">发起转账</button>
+                    </div>
+
+                    <div>
+                        <h3>铸造代币</h3>
+                        <div class="form-group">
+                            <label for="mintToAddress">接收地址</label>
+                            <input type="text" id="mintToAddress" placeholder="接收地址">
+                        </div>
+                        <div class="form-group">
+                            <label for="mintAmount">铸造数量</label>
+                            <input type="number" id="mintAmount" placeholder="铸造数量">
+                        </div>
+                        <div class="form-group">
+                            <label for="mintReason">铸造原因</label>
+                            <input type="text" id="mintReason" placeholder="铸造原因" value="管理员铸造">
+                        </div>
+                        <button class="btn secondary" onclick="mintTokens()">铸造代币</button>
+                    </div>
+                </div>
+
+                <div id="transferResult" class="result" style="display: none;"></div>
+            </div>
+
+            <!-- 挖矿管理 -->
+            <div class="tab-panel" id="mining">
+                <h2>挖矿管理</h2>
+                
+                <div class="auto-mine-status">
+                    <div class="status-indicator" id="miningIndicator"></div>
+                    <span id="miningStatus">自动挖矿已停止</span>
+                </div>
+
+                <button class="btn" onclick="startAutoMining()">开始自动挖矿</button>
+                <button class="btn danger" onclick="stopAutoMining()">停止自动挖矿</button>
+                <button class="btn secondary" onclick="mineOneBlock()">挖一个区块</button>
+
+                <div id="miningResult" class="result" style="display: none;"></div>
+            </div>
+
+            <!-- 验证者 -->
+            <div class="tab-panel" id="validators">
+                <h2>验证者管理</h2>
+                
+                <div style="margin-bottom: 20px;">
+                    <h3>添加验证者</h3>
+                    <div style="display: grid; grid-template-columns: 2fr 1fr auto; gap: 10px; align-items: end;">
+                        <div class="form-group">
+                            <label for="validatorUsername">用户名</label>
+                            <input type="text" id="validatorUsername" placeholder="要成为验证者的用户名">
+                        </div>
+                        <div class="form-group">
+                            <label for="validatorStake">质押数量</label>
+                            <input type="number" id="validatorStake" placeholder="1000" value="1000">
+                        </div>
+                        <button class="btn" onclick="addValidator()">添加验证者</button>
+                    </div>
+                </div>
+
+                <h3>当前验证者</h3>
+                <div id="validatorsList" class="validators-grid">
+                    <div class="loading">加载中...</div>
+                </div>
+
+                <div id="validatorResult" class="result" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let autoMiningActive = false;
+
+        // 显示标签页
+        function showTab(tabName) {
+            // 隐藏所有标签页
+            document.querySelectorAll('.tab-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // 显示选中的标签页
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            // 加载对应数据
+            if (tabName === 'blocks') loadBlocks();
+            if (tabName === 'validators') loadValidators();
+        }
+
+        // 加载区块链状态
+        async function loadStatus() {
+            try {
+                const response = await fetch('/api/status');
+                const status = await response.json();
+
+                document.getElementById('currentHeight').textContent = status.latestHeight;
+                document.getElementById('totalBlocks').textContent = status.totalBlocks;
+                document.getElementById('totalSupply').textContent = status.totalSupply.toLocaleString();
+                document.getElementById('activeValidators').textContent = status.activeValidators;
+                document.getElementById('totalUsers').textContent = status.totalUsers;
+            } catch (error) {
+                console.error('加载状态失败:', error);
+            }
+        }
+
+        // 加载区块列表
+        async function loadBlocks() {
+            try {
+                const response = await fetch('/api/blocks');
+                const blocks = await response.json();
+
+                const blocksList = document.getElementById('blocksList');
+                if (blocks.length === 0) {
+                    blocksList.innerHTML = '<div class="loading">暂无区块</div>';
+                    return;
+                }
+
+                blocksList.innerHTML = blocks.map(block => `
+                    <div class="block-item">
+                        <div class="block-header">
+                            <div class="block-height">区块 #${block.height}</div>
+                            <div class="block-time">${new Date(block.timestamp).toLocaleString()}</div>
+                        </div>
+                        <div class="block-info">
+                            <div><strong>哈希:</strong> <span class="hash">${block.hash}</span></div>
+                            <div><strong>验证者:</strong> ${block.validator}</div>
+                            <div><strong>交易数:</strong> ${block.transactionCount}</div>
+                            <div><strong>Gas使用:</strong> ${block.gasUsed}/${block.gasLimit}</div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('加载区块失败:', error);
+                document.getElementById('blocksList').innerHTML = '<div class="loading">加载失败</div>';
+            }
+        }
+
+        // 创建用户
+        async function createUser() {
+            const username = document.getElementById('newUsername').value.trim();
+            if (!username) {
+                showResult('userResult', '请输入用户名', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/user', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    showResult('userResult', `
+                        用户创建成功！<br>
+                        用户名: ${result.user.username}<br>
+                        地址: ${result.user.address}<br>
+                        助记词: ${result.user.mnemonic}
+                    `, 'success');
+                    document.getElementById('newUsername').value = '';
+                    loadStatus();
+                } else {
+                    showResult('userResult', result.error, 'error');
+                }
+            } catch (error) {
+                showResult('userResult', '创建用户失败: ' + error.message, 'error');
+            }
+        }
+
+        // 查询用户
+        async function queryUser() {
+            const username = document.getElementById('queryUsername').value.trim();
+            if (!username) {
+                showResult('userResult', '请输入用户名', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/user/${username}`);
+                if (response.ok) {
+                    const user = await response.json();
+                    showResult('userResult', `
+                        用户信息:<br>
+                        用户名: ${user.username}<br>
+                        地址: ${user.address}<br>
+                        余额: ${user.balance} 代币<br>
+                        创建时间: ${new Date(user.created).toLocaleString()}
+                    `, 'success');
+                } else {
+                    showResult('userResult', '用户不存在', 'error');
+                }
+            } catch (error) {
+                showResult('userResult', '查询失败: ' + error.message, 'error');
+            }
+        }
+
+        // 转账
+        async function transferTokens() {
+            const fromUsername = document.getElementById('fromUser').value.trim();
+            const toAddress = document.getElementById('toAddress').value.trim();
+            const amount = parseInt(document.getElementById('transferAmount').value);
+
+            if (!fromUsername || !toAddress || !amount) {
+                showResult('transferResult', '请填写完整信息', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/transfer', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fromUsername, toAddress, amount })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    showResult('transferResult', `
+                        转账成功！<br>
+                        交易哈希: ${result.transaction.txHash}<br>
+                        从: ${result.transaction.from}<br>
+                        到: ${result.transaction.to}<br>
+                        数量: ${result.transaction.amount} 代币
+                    `, 'success');
+                    document.getElementById('fromUser').value = '';
+                    document.getElementById('toAddress').value = '';
+                    document.getElementById('transferAmount').value = '';
+                    loadStatus();
+                } else {
+                    showResult('transferResult', result.error, 'error');
+                }
+            } catch (error) {
+                showResult('transferResult', '转账失败: ' + error.message, 'error');
+            }
+        }
+
+        // 铸造代币
+        async function mintTokens() {
+            const toAddress = document.getElementById('mintToAddress').value.trim();
+            const amount = parseInt(document.getElementById('mintAmount').value);
+            const reason = document.getElementById('mintReason').value.trim();
+
+            if (!toAddress || !amount) {
+                showResult('transferResult', '请填写完整信息', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/mint', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ toAddress, amount, reason })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    showResult('transferResult', `
+                        代币铸造成功！<br>
+                        接收地址: ${result.transaction.to}<br>
+                        铸造数量: ${result.transaction.amount} 代币<br>
+                        原因: ${result.transaction.reason}
+                    `, 'success');
+                    document.getElementById('mintToAddress').value = '';
+                    document.getElementById('mintAmount').value = '';
+                    loadStatus();
+                } else {
+                    showResult('transferResult', result.error, 'error');
+                }
+            } catch (error) {
+                showResult('transferResult', '铸造失败: ' + error.message, 'error');
+            }
+        }
+
+        // 开始自动挖矿
+        async function startAutoMining() {
+            try {
+                const response = await fetch('/api/auto-mine/start', { method: 'POST' });
+                const result = await response.json();
+                if (result.success) {
+                    autoMiningActive = true;
+                    updateMiningStatus();
+                    showResult('miningResult', '自动挖矿已启动', 'success');
+                }
+            } catch (error) {
+                showResult('miningResult', '启动失败: ' + error.message, 'error');
+            }
+        }
+
+        // 停止自动挖矿
+        async function stopAutoMining() {
+            try {
+                const response = await fetch('/api/auto-mine/stop', { method: 'POST' });
+                const result = await response.json();
+                if (result.success) {
+                    autoMiningActive = false;
+                    updateMiningStatus();
+                    showResult('miningResult', '自动挖矿已停止', 'success');
+                }
+            } catch (error) {
+                showResult('miningResult', '停止失败: ' + error.message, 'error');
+            }
+        }
+
+        // 挖一个区块
+        async function mineOneBlock() {
+            try {
+                const response = await fetch('/api/mine', { method: 'POST' });
+                const result = await response.json();
+                if (result.success) {
+                    showResult('miningResult', `
+                        区块挖矿成功！<br>
+                        区块高度: ${result.block.height}<br>
+                        区块哈希: ${result.block.hash}<br>
+                        验证者: ${result.block.validator}
+                    `, 'success');
+                    loadStatus();
+                    if (document.getElementById('blocks').classList.contains('active')) {
+                        loadBlocks();
+                    }
+                }
+            } catch (error) {
+                showResult('miningResult', '挖矿失败: ' + error.message, 'error');
+            }
+        }
+
+        // 添加验证者
+        async function addValidator() {
+            const username = document.getElementById('validatorUsername').value.trim();
+            const stake = parseInt(document.getElementById('validatorStake').value) || 1000;
+
+            if (!username) {
+                showResult('validatorResult', '请输入用户名', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/validator', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, stake })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    showResult('validatorResult', `
+                        验证者添加成功！<br>
+                        用户: ${result.validator.username}<br>
+                        地址: ${result.validator.address}<br>
+                        质押: ${result.validator.stake} 代币
+                    `, 'success');
+                    document.getElementById('validatorUsername').value = '';
+                    document.getElementById('validatorStake').value = '1000';
+                    loadValidators();
+                    loadStatus();
+                } else {
+                    showResult('validatorResult', result.error, 'error');
+                }
+            } catch (error) {
+                showResult('validatorResult', '添加失败: ' + error.message, 'error');
+            }
+        }
+
+        // 加载验证者列表
+        async function loadValidators() {
+            try {
+                const response = await fetch('/api/validators');
+                const validators = await response.json();
+
+                const validatorsList = document.getElementById('validatorsList');
+                if (validators.length === 0) {
+                    validatorsList.innerHTML = '<div class="loading">暂无验证者</div>';
+                    return;
+                }
+
+                validatorsList.innerHTML = validators.map(validator => `
+                    <div class="validator-card">
+                        <div class="validator-header">
+                            <div><strong>${validator.username}</strong></div>
+                            <div class="validator-status">${validator.status}</div>
+                        </div>
+                        <div><strong>地址:</strong> <span class="hash">${validator.address}</span></div>
+                        <div><strong>质押:</strong> ${validator.stake} 代币</div>
+                        <div><strong>投票权重:</strong> ${validator.power}</div>
+                        <div><strong>提议区块:</strong> ${validator.blocks_proposed}</div>
+                        <div><strong>获得奖励:</strong> ${validator.rewards_earned}</div>
+                        <div><strong>加入时间:</strong> ${new Date(validator.joined).toLocaleString()}</div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('加载验证者失败:', error);
+                document.getElementById('validatorsList').innerHTML = '<div class="loading">加载失败</div>';
+            }
+        }
+
+        // 更新挖矿状态
+        function updateMiningStatus() {
+            const indicator = document.getElementById('miningIndicator');
+            const status = document.getElementById('miningStatus');
+            
+            if (autoMiningActive) {
+                indicator.classList.add('active');
+                status.textContent = '自动挖矿运行中';
+            } else {
+                indicator.classList.remove('active');
+                status.textContent = '自动挖矿已停止';
+            }
+        }
+
+        // 显示结果
+        function showResult(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = message;
+            element.className = `result ${type}`;
+            element.style.display = 'block';
+            
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 5000);
+        }
+
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStatus();
+            loadBlocks();
+            
+            // 每30秒自动刷新状态
+            setInterval(loadStatus, 30000);
+            
+            // 如果在区块页面，每30秒刷新区块列表
+            setInterval(() => {
+                if (document.getElementById('blocks').classList.contains('active')) {
+                    loadBlocks();
+                }
+            }, 30000);
+        });
+    </script>
+</body>
+</html>
