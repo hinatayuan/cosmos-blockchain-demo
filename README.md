@@ -1,40 +1,70 @@
 # Cosmos 区块链演示项目
 
-基于 Cosmos JS SDK 开发的区块链演示系统，实现了完整的区块链基础功能。
+基于 Cosmos JS SDK + React + TypeScript 开发的现代化区块链演示系统，实现了完整的区块链基础功能。
 
 ## 🌟 主要功能
 
 - ✅ **代币生产（铸造）** - 支持系统级代币铸造和分发
-- ✅ **用户管理** - 创建新用户和钱包地址
+- ✅ **用户管理** - 创建新用户和钱包，生成助记词和地址
 - ✅ **代币转账** - 用户间的代币转移功能
-- ✅ **挖矿系统** - 验证者挖矿和奖励分发机制
-- ✅ **区块链浏览器** - Web界面查看区块高度和区块信息
+- ✅ **挖矿系统** - 验证者挖矿、奖励分发、自动挖矿
+- ✅ **区块链浏览器** - 现代化Web界面查看区块高度和区块信息
+
+## 🚀 技术栈
+
+### 前端
+- **React 18** - 现代化 React 框架
+- **TypeScript** - 类型安全的 JavaScript
+- **Vite** - 快速的构建工具
+- **Tailwind CSS** - 实用优先的 CSS 框架
+- **Lucide React** - 美观的图标库
+- **Axios** - HTTP 客户端
+
+### 后端
+- **Node.js + Express** - 服务器端
+- **Cosmos JS SDK** - 区块链核心功能
+- **secp256k1** - 椭圆曲线加密
 
 ## 🚀 快速开始
 
 ### 环境要求
 
-- Node.js 16.0 或更高版本
+- Node.js 18.0 或更高版本
 - npm 或 yarn 包管理器
 
 ### 安装步骤
 
-1. **克隆项目**
+1. **克隆项目**：
 ```bash
 git clone https://github.com/hinatayuan/cosmos-blockchain-demo.git
 cd cosmos-blockchain-demo
 ```
 
-2. **安装依赖**
+2. **安装依赖**：
 ```bash
 npm install
 ```
 
-3. **启动区块链浏览器**
+3. **启动开发环境**：
 ```bash
-npm run explorer
+# 同时启动后端API服务器和前端开发服务器
+npm run start:full
+
+# 或者分别启动
+npm run server    # 启动后端 API (端口 3000)
+npm run dev       # 启动前端开发服务器 (端口 5173)
 ```
-然后访问 http://localhost:3000
+
+4. **访问应用**：
+- 前端界面: http://localhost:5173
+- 后端API: http://localhost:3000
+
+### 生产构建
+
+```bash
+npm run build    # 构建前端
+npm run preview  # 预览构建结果
+```
 
 ## 🎮 使用方法
 
@@ -44,79 +74,82 @@ npm run explorer
 npm test
 ```
 
-### 2. 启动区块链浏览器
-启动Web界面：
+### 2. 启动完整应用
+启动前后端服务：
 ```bash
-npm run explorer
-```
-
-### 3. 核心功能演示
-
-#### 创建用户
-```javascript
-const blockchain = new CosmosBlockchain();
-await blockchain.initialize();
-
-// 创建新用户
-const user = await blockchain.createUser('alice');
-console.log('用户地址:', user.address);
-```
-
-#### 代币铸造
-```javascript
-// 铸造代币到指定地址
-await blockchain.mintTokens(user.address, 1000, '初始资金');
-```
-
-#### 代币转账
-```javascript
-// 用户间转账
-await blockchain.transferTokens('alice', bobAddress, 100);
-```
-
-#### 添加验证者
-```javascript
-// 将用户设置为验证者
-await blockchain.addValidator('alice', 1000);
-```
-
-#### 挖矿
-```javascript
-// 挖一个新区块
-const block = await blockchain.mineBlock();
-console.log('新区块高度:', block.height);
+npm run start:full
 ```
 
 ## 📊 Web界面功能
 
-访问 http://localhost:3000 可以使用以下功能：
+现代化的 React + TypeScript 界面包含5个主要标签页：
 
-- **📦 区块浏览** - 查看所有区块信息
-- **👥 用户管理** - 创建和查询用户
-- **💸 代币转账** - 转账和铸造代币
-- **⛏️ 挖矿管理** - 手动挖矿和自动挖矿
-- **🛡️ 验证者** - 管理网络验证者
+- **📦 区块浏览** - 实时查看所有区块信息和哈希
+- **👥 用户管理** - 创建用户、查询余额、管理助记词
+- **💸 代币转账** - 转账和铸造代币的直观界面
+- **⛏️ 挖矿管理** - 手动挖矿和自动挖矿控制面板
+- **🛡️ 验证者** - 验证者管理和实时状态监控
+
+### 界面特性
+
+- **响应式设计** - 完美适配桌面和移动设备
+- **实时更新** - 自动刷新区块链状态
+- **类型安全** - TypeScript 确保代码质量
+- **现代化UI** - 玻璃态卡片、渐变背景、动画效果
+- **错误处理** - 友好的错误提示和加载状态
+- **无障碍设计** - 支持键盘导航和屏幕阅读器
 
 ## 🏗️ 项目架构
 
 ```
 cosmos-blockchain-demo/
 ├── src/
-│   ├── blockchain.js      # 区块链核心逻辑
-│   ├── explorer.js        # Web API 服务器
-│   └── test.js           # 测试脚本
-├── public/
-│   └── index.html        # Web界面
-├── package.json          # 项目配置
-└── README.md            # 项目说明
+│   ├── components/           # React 组件
+│   │   ├── tabs/            # 标签页组件
+│   │   ├── StatusCard.tsx   # 状态卡片
+│   │   ├── TabButton.tsx    # 标签按钮
+│   │   ├── Alert.tsx        # 提示组件
+│   │   └── ...
+│   ├── types/               # TypeScript 类型定义
+│   ├── utils/               # 工具函数和 API
+│   ├── App.tsx              # 主应用组件
+│   ├── main.tsx             # React 入口
+│   └── index.css            # 样式文件
+├── server/
+│   ├── blockchain.js        # 区块链核心逻辑
+│   ├── explorer.js          # API 服务器
+│   └── test.js              # 测试脚本
+├── package.json             # 项目配置
+├── vite.config.ts           # Vite 配置
+├── tsconfig.json            # TypeScript 配置
+├── tailwind.config.js       # Tailwind CSS 配置
+└── README.md                # 项目文档
 ```
 
-## 🔧 技术栈
+## 🔧 开发指南
 
-- **后端**: Node.js + Express
-- **区块链**: Cosmos JS SDK
-- **前端**: HTML5 + CSS3 + JavaScript
-- **加密**: secp256k1 椭圆曲线加密
+### 添加新功能
+
+1. **定义类型** - 在 `src/types/index.ts` 中添加 TypeScript 类型
+2. **创建 API** - 在 `src/utils/api.ts` 中添加 API 方法
+3. **开发组件** - 在 `src/components/` 中创建 React 组件
+4. **集成功能** - 在对应的标签页中集成新功能
+
+### 样式自定义
+
+使用 Tailwind CSS 自定义样式：
+- 修改 `tailwind.config.js` 配置主题
+- 在 `src/index.css` 中添加自定义组件样式
+- 使用 `glass-card`、`btn-primary` 等预定义类
+
+### API 扩展
+
+在 `src/explorer.js` 中添加新的 API 端点：
+```javascript
+app.get('/api/new-endpoint', (req, res) => {
+  // 实现新功能
+});
+```
 
 ## 📋 API 接口
 
@@ -147,6 +180,8 @@ cosmos-blockchain-demo/
 - **地址生成** - 基于secp256k1曲线
 - **交易验证** - 余额检查和签名验证
 - **区块哈希** - SHA256哈希算法
+- **类型安全** - TypeScript 静态类型检查
+- **输入验证** - 前后端双重验证
 
 ## 🧪 测试用例
 
@@ -165,10 +200,19 @@ cosmos-blockchain-demo/
 - 跨链资产转移
 - 治理投票机制
 - 更复杂的共识算法
+- WebSocket 实时通信
+- 数据可视化图表
+- 移动端适配优化
 
 ## 🤝 贡献
 
 欢迎提交问题和改进建议！
+
+### 开发流程
+1. Fork 项目
+2. 创建功能分支
+3. 提交更改
+4. 创建 Pull Request
 
 ## 📄 许可证
 
@@ -181,3 +225,12 @@ MIT License
 ---
 
 **注意**: 这是一个演示项目，用于学习区块链技术。请勿在生产环境中使用。
+
+## 🎯 学习目标
+
+这个项目适合以下学习场景：
+- 区块链技术原理学习
+- React + TypeScript 开发实践
+- 现代前端工具链使用
+- API 设计和前后端交互
+- 用户体验设计
