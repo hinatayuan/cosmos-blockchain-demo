@@ -1,29 +1,7 @@
 // server/blockchain.js - 区块链核心实现
 const { DirectSecp256k1HdWallet } = require('@cosmjs/proto-signing');
-const { stringToPath } = require('@cosmjs/crypto');
 const crypto = require('crypto');
-
-// 简单的助记词生成函数（用于演示）
-function generateMnemonic() {
-  const words = [
-    'abandon', 'ability', 'able', 'about', 'above', 'absent', 'absorb', 'abstract',
-    'absurd', 'abuse', 'access', 'accident', 'account', 'accuse', 'achieve', 'acid',
-    'acoustic', 'acquire', 'across', 'act', 'action', 'actor', 'actress', 'actual',
-    'adapt', 'add', 'addict', 'address', 'adjust', 'admit', 'adult', 'advance',
-    'advice', 'aerobic', 'affair', 'afford', 'afraid', 'again', 'age', 'agent',
-    'agree', 'ahead', 'aim', 'air', 'airport', 'aisle', 'alarm', 'album',
-    'alcohol', 'alert', 'alien', 'all', 'alley', 'allow', 'almost', 'alone',
-    'alpha', 'already', 'also', 'alter', 'always', 'amateur', 'amazing', 'among'
-  ];
-  
-  // 生成12个随机单词
-  const mnemonic = [];
-  for (let i = 0; i < 12; i++) {
-    mnemonic.push(words[Math.floor(Math.random() * words.length)]);
-  }
-  
-  return mnemonic.join(' ');
-}
+const bip39 = require('bip39');
 
 class CosmosBlockchain {
   constructor() {
@@ -41,8 +19,8 @@ class CosmosBlockchain {
   // 1. 创建新用户/钱包
   async createUser(username) {
     try {
-      // 生成助记词
-      const mnemonic = generateMnemonic();
+      // 生成标准BIP39助记词
+      const mnemonic = bip39.generateMnemonic();
       
       // 创建钱包
       const wallet = await DirectSecp256k1HdWallet.fromMnemonic(
