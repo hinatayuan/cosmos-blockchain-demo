@@ -3,7 +3,7 @@ import {
   Blocks, 
   Users, 
   ArrowRightLeft, 
-  Pickaxe, 
+  Hammer, 
   Shield,
   Activity,
   Coins,
@@ -144,7 +144,7 @@ function App() {
             <TabButton
               active={activeTab === 'mining'}
               onClick={() => setActiveTab('mining')}
-              icon={<Pickaxe className="w-4 h-4" />}
+              icon={<Hammer className="w-4 h-4" />}
             >
               挖矿管理
             </TabButton>
